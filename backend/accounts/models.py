@@ -33,9 +33,6 @@ class Profile(models.Model):
 
 
 class TokenAbstract(models.Model):
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_tokens"
-    )
     token = models.UUIDField(default=uuid.uuid4, unique=True, db_index=True)
     is_used = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -66,8 +63,14 @@ class TokenAbstract(models.Model):
 
 
 class EmailVerificationToken(TokenAbstract):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="email_verification_tokens"
+    )
     expiry_timedelta = timedelta(hours=EMAIL_VERIFICATION_TOKEN_EXPIRY_HOURS)
 
 
 class PasswordResetToken(TokenAbstract):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="password_reset_tokens"
+    )
     expiry_timedelta = timedelta(hours=PASSWORD_RESET_TOKEN_EXPIRY_HOURS)
