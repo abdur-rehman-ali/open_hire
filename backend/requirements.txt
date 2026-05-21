@@ -2,7 +2,9 @@ asgiref==3.11.1
 black==25.11.0
 click==8.1.8
 Django==4.2.30
+django-extensions==4.1
 djangorestframework==3.16.1
+MarkupSafe==3.0.3
 mypy_extensions==1.1.0
 packaging==26.2
 pathspec==1.1.1
@@ -11,3 +13,4 @@ pytokens==0.4.1
 sqlparse==0.5.5
 tomli==2.4.1
 typing_extensions==4.15.0
+Werkzeug==3.1.8
