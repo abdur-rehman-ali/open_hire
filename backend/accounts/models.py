@@ -53,6 +53,11 @@ class TokenAbstract(models.Model):
             self.expires_at = timezone.now() + self.expiry_timedelta
         super().save(*args, **kwargs)
 
+    def invalidate(self):
+        self.is_used = True
+        self.expires_at = timezone.now()
+        self.save(update_fields=["is_used", "expires_at"])
+
     def is_expired(self):
         return timezone.now() > self.expires_at
 
