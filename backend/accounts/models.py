@@ -7,8 +7,12 @@ from decouple import config
 
 User = get_user_model()
 
-EMAIL_VERIFICATION_TOKEN_EXPIRY_HOURS = config("EMAIL_VERIFICATION_TOKEN_EXPIRY_HOURS", default=24, cast=int)
-PASSWORD_RESET_TOKEN_EXPIRY_HOURS = config("PASSWORD_RESET_TOKEN_EXPIRY_HOURS", default=1, cast=int)
+EMAIL_VERIFICATION_TOKEN_EXPIRY_HOURS = config(
+    "EMAIL_VERIFICATION_TOKEN_EXPIRY_HOURS", default=24, cast=int
+)
+PASSWORD_RESET_TOKEN_EXPIRY_HOURS = config(
+    "PASSWORD_RESET_TOKEN_EXPIRY_HOURS", default=1, cast=int
+)
 
 
 class Profile(models.Model):
