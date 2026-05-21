@@ -9,6 +9,7 @@ mypy_extensions==1.1.0
 packaging==26.2
 pathspec==1.1.1
 platformdirs==4.4.0
+python-decouple==3.8
 pytokens==0.4.1
 sqlparse==0.5.5
 tomli==2.4.1
