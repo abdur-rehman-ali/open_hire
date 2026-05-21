@@ -3,6 +3,7 @@ from datetime import timedelta
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.db.models import Q
 from decouple import config
 
 User = get_user_model()
@@ -54,6 +55,13 @@ class TokenAbstract(models.Model):
         self.is_used = True
         self.expires_at = timezone.now()
         self.save(update_fields=["is_used", "expires_at"])
+
+    @classmethod
+    def delete_expired(cls):
+        """Delete expired or used tokens"""
+        return cls.objects.filter(
+            Q(is_used=True) | Q(expires_at__lte=timezone.now())
+        ).delete()
 
     def is_expired(self):
         return timezone.now() > self.expires_at
