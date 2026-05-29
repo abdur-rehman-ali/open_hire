@@ -43,8 +43,8 @@ class RegistrationSerializer(serializers.Serializer):
         )
 
         # create email verification token and attach it to the user instance
-        token = EmailVerificationToken.objects.create(user=user)
-        setattr(user, "_email_verification_token", token)
+        email_verification = EmailVerificationToken.objects.create(user=user)
+        setattr(user, "_email_verification_token", email_verification)
 
         return user
 
@@ -55,7 +55,7 @@ class RegistrationSerializer(serializers.Serializer):
         except Exception:
             profile = None
 
-        token = getattr(instance, "_email_verification_token", None)
+        email_verification = getattr(instance, "_email_verification_token", None)
 
         return {
             "id": instance.id,
@@ -68,7 +68,7 @@ class RegistrationSerializer(serializers.Serializer):
                 "is_email_verified": profile.is_email_verified if profile else False,
             },
             "email_verification": {
-                "token": str(token.token) if token else None,
-                "expires_at": token.expires_at.isoformat() if token else None,
+                "token": str(email_verification.token) if email_verification else None,
+                "expires_at": email_verification.expires_at.isoformat() if email_verification else None,
             },
         }
