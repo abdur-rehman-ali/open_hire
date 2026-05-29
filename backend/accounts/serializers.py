@@ -33,7 +33,7 @@ class RegistrationSerializer(serializers.Serializer):
         phone_number    = validated_data.pop("phone_number", "")
 
         user = User.objects.create_user(username=username, email=email, password=password)
-        Profile.objects.update_or_create(
+        profile, _ = Profile.objects.update_or_create(
             user=user,
             defaults={
                 "bio": bio,
@@ -41,6 +41,7 @@ class RegistrationSerializer(serializers.Serializer):
                 "phone_number": phone_number,
             },
         )
+        setattr(user, "_profile", profile)
 
         # create email verification token and attach it to the user instance
         email_verification = EmailVerificationToken.objects.create(user=user)
@@ -49,13 +50,8 @@ class RegistrationSerializer(serializers.Serializer):
         return user
 
     def to_representation(self, instance):
-        profile = None
-        try:
-            profile = instance.profile
-        except Exception:
-            profile = None
-
-        email_verification = getattr(instance, "_email_verification_token", None)
+        profile             = getattr(instance, "_profile", None)
+        email_verification  = getattr(instance, "_email_verification_token", None)
 
         return {
             "id": instance.id,
