@@ -4,13 +4,13 @@ from django.db import models
 
 class EmailLog(models.Model):
     class Status(models.TextChoices):
-        PENDING = "pending", "Pending"
-        SENT = "sent", "Sent"
-        FAILED = "failed", "Failed"
+        PENDING     = "pending", "Pending"
+        SENT        = "sent", "Sent"
+        FAILED      = "failed", "Failed"
 
     class EmailType(models.TextChoices):
-        EMAIL_VERIFICATION = "email_verification", "Email Verification"
-        PASSWORD_RESET = "password_reset", "Password Reset"
+        EMAIL_VERIFICATION  = "email_verification", "Email Verification"
+        PASSWORD_RESET      = "password_reset", "Password Reset"
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     recipient = models.EmailField()
