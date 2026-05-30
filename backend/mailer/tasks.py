@@ -40,13 +40,13 @@ def send_email_task(self, email_log_id: str):
         log.sent_at = timezone.now()
         log.save(update_fields=["status", "sent_at"])
 
-    except Exception as exc:
+    except Exception as exception:
         log.retry_count += 1
-        log.error_message = str(exc)
+        log.error_message = str(exception)
         log.save(update_fields=["retry_count", "error_message"])
 
         try:
-            raise self.retry(exc=exc, countdown=60 * (2 ** self.request.retries))
+            raise self.retry(exc=exception, countdown=60 * (2 ** self.request.retries))
         except self.MaxRetriesExceededError:
             log.status = EmailLog.Status.FAILED
             log.save(update_fields=["status"])
@@ -55,5 +55,5 @@ def send_email_task(self, email_log_id: str):
                 log.email_type,
                 log.recipient,
                 log.retry_count,
-                exc,
+                exception,
             )
