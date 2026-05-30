@@ -1,5 +1,7 @@
 from django.conf import settings
 
+from accounts.models.email_verification_token import EMAIL_VERIFICATION_TOKEN_EXPIRY_HOURS
+from accounts.models.password_reset_token import PASSWORD_RESET_TOKEN_EXPIRY_HOURS
 from mailer.models import EmailLog
 
 _TEMPLATE_META = {
@@ -18,7 +20,7 @@ class EmailService:
         context = {
             "username": user.username,
             "verification_url": f"{settings.FRONTEND_URL}/verify-email/{token.token}",
-            "expiry_hours": 24,
+            "expiry_hours": EMAIL_VERIFICATION_TOKEN_EXPIRY_HOURS,
         }
         return EmailService._dispatch(
             recipient=user.email,
@@ -31,7 +33,7 @@ class EmailService:
         context = {
             "username": user.username,
             "reset_url": f"{settings.FRONTEND_URL}/reset-password/{token.token}",
-            "expiry_hours": 1,
+            "expiry_hours": PASSWORD_RESET_TOKEN_EXPIRY_HOURS,
         }
         return EmailService._dispatch(
             recipient=user.email,
