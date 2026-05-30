@@ -17,7 +17,7 @@ def send_email_task(self, email_log_id: str):
     try:
         log = EmailLog.objects.get(id=email_log_id)
     except EmailLog.DoesNotExist:
-        logger.error("EmailLog %s not found", email_log_id)
+        logger.error(f"EmailLog {email_log_id} not found")
         return
 
     log.last_attempt_at = timezone.now()
@@ -51,9 +51,5 @@ def send_email_task(self, email_log_id: str):
             log.status = EmailLog.Status.FAILED
             log.save(update_fields=["status"])
             logger.error(
-                "Email %s to %s permanently failed after %d retries: %s",
-                log.email_type,
-                log.recipient,
-                log.retry_count,
-                exception,
+                f"Email {log.email_type} to {log.recipient} permanently failed after {log.retry_count} retries: {exception}"
             )
