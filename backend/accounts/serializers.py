@@ -21,7 +21,9 @@ class RegistrationSerializer(serializers.Serializer):
 
     def validate_username(self, value):
         if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError("A user with this username already exists.")
+            raise serializers.ValidationError(
+                "A user with this username already exists."
+            )
         return value
 
     def create(self, validated_data):
@@ -32,7 +34,9 @@ class RegistrationSerializer(serializers.Serializer):
         role            = validated_data.pop("role", Profile.Role.JOB_SEEKER)
         phone_number    = validated_data.pop("phone_number", "")
 
-        user = User.objects.create_user(username=username, email=email, password=password)
+        user = User.objects.create_user(
+            username=username, email=email, password=password
+        )
         profile, _ = Profile.objects.update_or_create(
             user=user,
             defaults={
@@ -65,6 +69,10 @@ class RegistrationSerializer(serializers.Serializer):
             },
             "email_verification": {
                 "token": str(email_verification.token) if email_verification else None,
-                "expires_at": email_verification.expires_at.isoformat() if email_verification else None,
+                "expires_at": (
+                    email_verification.expires_at.isoformat()
+                    if email_verification
+                    else None
+                ),
             },
         }
