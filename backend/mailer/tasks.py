@@ -3,8 +3,9 @@ import logging
 from celery import shared_task
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from django.db.models import F
 from django.utils import timezone
-
+from mailer.models import EmailLog
 from mailer.registry import TEMPLATE_MAP
 
 logger = logging.getLogger(__name__)
@@ -12,7 +13,6 @@ logger = logging.getLogger(__name__)
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=60)
 def send_email_task(self, email_log_id: str):
-    from mailer.models import EmailLog
 
     try:
         log = EmailLog.objects.get(id=email_log_id)
@@ -41,9 +41,11 @@ def send_email_task(self, email_log_id: str):
         log.save(update_fields=["status", "sent_at"])
 
     except Exception as exception:
-        log.retry_count += 1
-        log.error_message = str(exception)
-        log.save(update_fields=["retry_count", "error_message"])
+        log = EmailLog.objects.get(id=log.id).update(
+            retry_count=F("retry_count") + 1,
+            error_message=str(exception)
+        )
+        log.refresh_from_db()
 
         try:
             raise self.retry(exc=exception, countdown=60 * (2 ** self.request.retries))
