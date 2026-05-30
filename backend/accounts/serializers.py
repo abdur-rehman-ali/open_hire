@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
 from .models import Profile, EmailVerificationToken
+from mailer.services import EmailService
 
 User = get_user_model()
 
@@ -50,6 +51,8 @@ class RegistrationSerializer(serializers.Serializer):
         # create email verification token and attach it to the user instance
         email_verification = EmailVerificationToken.objects.create(user=user)
         setattr(user, "_email_verification_token", email_verification)
+
+        EmailService.send_verification_email(user, email_verification)
 
         return user
 

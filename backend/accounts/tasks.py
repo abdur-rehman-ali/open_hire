@@ -1,6 +1,2 @@
-from celery import shared_task
-
-
-@shared_task
-def sample_task():
-    return "Celery is working!"
+# Celery tasks for the accounts app.
+# Email sending tasks live in mailer/tasks.py and are called via mailer.services.EmailService.
