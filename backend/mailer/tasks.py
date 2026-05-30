@@ -5,18 +5,9 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils import timezone
 
-logger = logging.getLogger(__name__)
+from mailer.registry import TEMPLATE_MAP
 
-TEMPLATE_MAP = {
-    "email_verification": {
-        "html": "mailer/emails/email_verification/email_verification.html",
-        "txt": "mailer/emails/email_verification/email_verification.txt",
-    },
-    "password_reset": {
-        "html": "mailer/emails/password_reset/password_reset.html",
-        "txt": "mailer/emails/password_reset/password_reset.txt",
-    },
-}
+logger = logging.getLogger(__name__)
 
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=60)
