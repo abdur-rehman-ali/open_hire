@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
 from .models import Profile, EmailVerificationToken
-from mailer.services import EmailService
+from mailer.services.email_service import EmailService
 
 User = get_user_model()
 
