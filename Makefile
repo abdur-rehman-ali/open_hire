@@ -1,4 +1,4 @@
-.PHONY: build up down restart logs logs-api api-container migrate makemigrations createsuperuser shell clean prune
+.PHONY: build up down restart logs logs-api api-container migrate makemigrations createsuperuser shell celery celery-logs flower flower-logs clean prune
 
 # ── Setup ─────────────────────────────────────────────────
 build:
@@ -36,6 +36,19 @@ createsuperuser:
 
 shell:
 	docker compose exec apis python manage.py shell_plus
+
+# ── Celery ────────────────────────────────────────────────
+celery:
+	docker compose up -d celery_worker
+
+celery-logs:
+	docker compose logs -f celery_worker
+
+flower:
+	docker compose up -d flower
+
+flower-logs:
+	docker compose logs -f flower
 
 # ── Cleanup ───────────────────────────────────────────────
 clean:
