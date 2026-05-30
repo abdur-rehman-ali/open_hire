@@ -3,15 +3,7 @@ from django.conf import settings
 from accounts.models.email_verification_token import EMAIL_VERIFICATION_TOKEN_EXPIRY_HOURS
 from accounts.models.password_reset_token import PASSWORD_RESET_TOKEN_EXPIRY_HOURS
 from mailer.models import EmailLog
-
-_TEMPLATE_META = {
-    EmailLog.EmailType.EMAIL_VERIFICATION: {
-        "subject": "Verify your Open Hire email address",
-    },
-    EmailLog.EmailType.PASSWORD_RESET: {
-        "subject": "Reset your Open Hire password",
-    },
-}
+from mailer.registry import TEMPLATE_META
 
 
 class EmailService:
@@ -47,7 +39,7 @@ class EmailService:
 
         log = EmailLog.objects.create(
             recipient=recipient,
-            subject=_TEMPLATE_META[email_type]["subject"],
+            subject=TEMPLATE_META[email_type]["subject"],
             email_type=email_type,
             context_data=context,
             status=EmailLog.Status.PENDING,
