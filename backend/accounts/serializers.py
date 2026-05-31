@@ -71,7 +71,6 @@ class RegistrationSerializer(serializers.Serializer):
                 "is_email_verified": profile.is_email_verified if profile else False,
             },
             "email_verification": {
-                "token": str(email_verification.token) if email_verification else None,
                 "expires_at": (
                     email_verification.expires_at.isoformat()
                     if email_verification
