@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-
+from django.db import transaction
 from .models import Profile, EmailVerificationToken
 from mailer.services.email_service import EmailService
 
@@ -35,22 +35,22 @@ class RegistrationSerializer(serializers.Serializer):
         role = validated_data.pop("role", Profile.Role.JOB_SEEKER)
         phone_number = validated_data.pop("phone_number", "")
 
-        user = User.objects.create_user(
-            username=username, email=email, password=password
-        )
-        profile, _ = Profile.objects.update_or_create(
-            user=user,
-            defaults={
-                "bio": bio,
-                "role": role,
-                "phone_number": phone_number,
-            },
-        )
-        setattr(user, "_profile", profile)
+        with transaction.atomic():
+            user = User.objects.create_user(
+                username=username, email=email, password=password
+            )
+            profile, _ = Profile.objects.update_or_create(
+                user=user,
+                defaults={
+                    "bio": bio,
+                    "role": role,
+                    "phone_number": phone_number,
+                },
+            )
+            setattr(user, "_profile", profile)
 
-        # create email verification token and attach it to the user instance
-        email_verification = EmailVerificationToken.objects.create(user=user)
-        setattr(user, "_email_verification_token", email_verification)
+            email_verification = EmailVerificationToken.objects.create(user=user)
+            setattr(user, "_email_verification_token", email_verification)
 
         EmailService.send_verification_email(user, email_verification)
 
