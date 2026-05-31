@@ -4,7 +4,8 @@ from django.contrib.auth.password_validation import (
     validate_password as django_validate_password,
 )
 from django.db import transaction
-from .models import Profile, EmailVerificationToken
+
+from accounts.models import Profile, EmailVerificationToken
 from mailer.services.email_service import EmailService
 
 User = get_user_model()
