@@ -10,7 +10,17 @@ class RegistrationView(APIView):
 
     def post(self, request):
         """
+        Register a new user account and send an email verification link.
+
         POST /api/v1/accounts/register
+
+        Args:
+            request: DRF Request containing username, email, password, role,
+                     and optional bio / phone_number fields.
+
+        Returns:
+            Response: 201 with user id, username, email, profile, and
+                      email_verification expiry; 400 on validation errors.
         """
         serializer = RegistrationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

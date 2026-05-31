@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import (
     validate_password as django_validate_password,
 )
-from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from .models import Profile, EmailVerificationToken
 from mailer.services.email_service import EmailService
@@ -33,6 +32,7 @@ class RegistrationSerializer(serializers.Serializer):
 
     def validate_password(self, value):
         django_validate_password(value)
+        return value
 
     def create(self, validated_data):
         username = validated_data.pop("username")
