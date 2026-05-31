@@ -41,7 +41,7 @@ def send_email_task(self, email_log_id: str):
         log.save(update_fields=["status", "sent_at"])
 
     except Exception as exception:
-        log = EmailLog.objects.get(id=log.id).update(
+        EmailLog.objects.filter(id=log.id).update(
             retry_count=F("retry_count") + 1, error_message=str(exception)
         )
         log.refresh_from_db()

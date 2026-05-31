@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-
+from django.contrib.auth.password_validation import (
+    validate_password as django_validate_password,
+)
+from django.db import transaction
 from .models import Profile, EmailVerificationToken
 from mailer.services.email_service import EmailService
 
@@ -27,6 +30,10 @@ class RegistrationSerializer(serializers.Serializer):
             )
         return value
 
+    def validate_password(self, value):
+        django_validate_password(value)
+        return value
+
     def create(self, validated_data):
         username = validated_data.pop("username")
         email = validated_data.pop("email")
@@ -35,22 +42,22 @@ class RegistrationSerializer(serializers.Serializer):
         role = validated_data.pop("role", Profile.Role.JOB_SEEKER)
         phone_number = validated_data.pop("phone_number", "")
 
-        user = User.objects.create_user(
-            username=username, email=email, password=password
-        )
-        profile, _ = Profile.objects.update_or_create(
-            user=user,
-            defaults={
-                "bio": bio,
-                "role": role,
-                "phone_number": phone_number,
-            },
-        )
-        setattr(user, "_profile", profile)
+        with transaction.atomic():
+            user = User.objects.create_user(
+                username=username, email=email, password=password
+            )
+            profile, _ = Profile.objects.update_or_create(
+                user=user,
+                defaults={
+                    "bio": bio,
+                    "role": role,
+                    "phone_number": phone_number,
+                },
+            )
+            setattr(user, "_profile", profile)
 
-        # create email verification token and attach it to the user instance
-        email_verification = EmailVerificationToken.objects.create(user=user)
-        setattr(user, "_email_verification_token", email_verification)
+            email_verification = EmailVerificationToken.objects.create(user=user)
+            setattr(user, "_email_verification_token", email_verification)
 
         EmailService.send_verification_email(user, email_verification)
 
@@ -71,7 +78,6 @@ class RegistrationSerializer(serializers.Serializer):
                 "is_email_verified": profile.is_email_verified if profile else False,
             },
             "email_verification": {
-                "token": str(email_verification.token) if email_verification else None,
                 "expires_at": (
                     email_verification.expires_at.isoformat()
                     if email_verification
