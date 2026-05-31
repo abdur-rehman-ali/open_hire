@@ -2,7 +2,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 
-from .serializers import RegistrationSerializer, VerifyEmailSerializer
+from .serializers import (
+    RegistrationSerializer,
+    VerifyEmailSerializer,
+    PasswordResetRequestSerializer,
+    PasswordResetConfirmSerializer,
+)
 
 
 class RegistrationView(APIView):
@@ -51,4 +56,58 @@ class VerifyEmailView(APIView):
         serializer.save()
         return Response(
             {"detail": "Email verified successfully."}, status=status.HTTP_200_OK
+        )
+
+
+class PasswordResetRequestView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        """
+        Send a password reset email if the account exists and is email-verified.
+
+        Always returns 200 regardless of whether the email is registered to
+        prevent user enumeration.
+
+        POST /api/v1/accounts/password-reset/
+
+        Args:
+            request: DRF Request containing an `email` field.
+
+        Returns:
+            Response: 200 always.
+        """
+        serializer = PasswordResetRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(
+            {
+                "detail": "If this email is registered and verified, a reset link has been sent."
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class PasswordResetConfirmView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        """
+        Confirm a password reset using a valid token and set the new password.
+
+        POST /api/v1/accounts/password-reset/confirm/
+
+        Args:
+            request: DRF Request containing `token` UUID and `new_password` fields.
+
+        Returns:
+            Response: 200 on success; 400 if the token is invalid/expired or
+                      the password fails validation.
+        """
+        serializer = PasswordResetConfirmSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(
+            {"detail": "Password has been reset successfully."},
+            status=status.HTTP_200_OK,
         )
