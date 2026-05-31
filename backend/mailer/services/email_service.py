@@ -1,6 +1,8 @@
 from django.conf import settings
 
-from accounts.models.email_verification_token import EMAIL_VERIFICATION_TOKEN_EXPIRY_HOURS
+from accounts.models.email_verification_token import (
+    EMAIL_VERIFICATION_TOKEN_EXPIRY_HOURS,
+)
 from accounts.models.password_reset_token import PASSWORD_RESET_TOKEN_EXPIRY_HOURS
 from mailer.models import EmailLog
 from mailer.registry import TEMPLATE_META

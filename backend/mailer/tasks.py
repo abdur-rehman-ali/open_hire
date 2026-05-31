@@ -42,13 +42,12 @@ def send_email_task(self, email_log_id: str):
 
     except Exception as exception:
         log = EmailLog.objects.get(id=log.id).update(
-            retry_count=F("retry_count") + 1,
-            error_message=str(exception)
+            retry_count=F("retry_count") + 1, error_message=str(exception)
         )
         log.refresh_from_db()
 
         try:
-            raise self.retry(exc=exception, countdown=60 * (2 ** self.request.retries))
+            raise self.retry(exc=exception, countdown=60 * (2**self.request.retries))
         except self.MaxRetriesExceededError:
             log.status = EmailLog.Status.FAILED
             log.save(update_fields=["status"])

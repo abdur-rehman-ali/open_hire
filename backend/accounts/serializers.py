@@ -8,12 +8,12 @@ User = get_user_model()
 
 
 class RegistrationSerializer(serializers.Serializer):
-    username        = serializers.CharField(max_length=150)
-    email           = serializers.EmailField()
-    password        = serializers.CharField(write_only=True, min_length=8)
-    bio             = serializers.CharField(required=False, allow_blank=True)
-    role            = serializers.ChoiceField(choices=Profile.Role.choices)
-    phone_number    = serializers.CharField(required=False, allow_blank=True)
+    username = serializers.CharField(max_length=150)
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True, min_length=8)
+    bio = serializers.CharField(required=False, allow_blank=True)
+    role = serializers.ChoiceField(choices=Profile.Role.choices)
+    phone_number = serializers.CharField(required=False, allow_blank=True)
 
     def validate_email(self, value):
         if User.objects.filter(email=value).exists():
@@ -28,12 +28,12 @@ class RegistrationSerializer(serializers.Serializer):
         return value
 
     def create(self, validated_data):
-        username        = validated_data.pop("username")
-        email           = validated_data.pop("email")
-        password        = validated_data.pop("password")
-        bio             = validated_data.pop("bio", "")
-        role            = validated_data.pop("role", Profile.Role.JOB_SEEKER)
-        phone_number    = validated_data.pop("phone_number", "")
+        username = validated_data.pop("username")
+        email = validated_data.pop("email")
+        password = validated_data.pop("password")
+        bio = validated_data.pop("bio", "")
+        role = validated_data.pop("role", Profile.Role.JOB_SEEKER)
+        phone_number = validated_data.pop("phone_number", "")
 
         user = User.objects.create_user(
             username=username, email=email, password=password
@@ -57,8 +57,8 @@ class RegistrationSerializer(serializers.Serializer):
         return user
 
     def to_representation(self, instance):
-        profile             = getattr(instance, "_profile", None)
-        email_verification  = getattr(instance, "_email_verification_token", None)
+        profile = getattr(instance, "_profile", None)
+        email_verification = getattr(instance, "_email_verification_token", None)
 
         return {
             "id": instance.id,
