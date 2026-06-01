@@ -8,6 +8,7 @@ from .serializers import (
     PasswordResetRequestSerializer,
     PasswordResetConfirmSerializer,
     LoginSerializer,
+    CurrentUserSerializer,
 )
 
 
@@ -108,6 +109,28 @@ class LoginView(APIView):
         serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.get_tokens(), status=status.HTTP_200_OK)
+
+
+class CurrentUserView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        """
+        Return the profile of the currently authenticated user.
+
+        GET /api/v1/accounts/me
+
+        Args:
+            request: DRF Request with a valid JWT Bearer token in the
+                     Authorization header.
+
+        Returns:
+            Response: 200 with id, username, email, and profile fields;
+                      401 if the token is missing or invalid.
+        """
+        user = request.user
+        serializer = CurrentUserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class PasswordResetConfirmView(APIView):
