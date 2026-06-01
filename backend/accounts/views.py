@@ -7,6 +7,7 @@ from .serializers import (
     VerifyEmailSerializer,
     PasswordResetRequestSerializer,
     PasswordResetConfirmSerializer,
+    LoginSerializer,
 )
 
 
@@ -86,6 +87,27 @@ class PasswordResetRequestView(APIView):
             },
             status=status.HTTP_200_OK,
         )
+
+
+class LoginView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        """
+        Authenticate a user with email and password and return a JWT token pair.
+
+        POST /api/v1/accounts/login
+
+        Args:
+            request: DRF Request containing email and password fields.
+
+        Returns:
+            Response: 200 with access and refresh JWT tokens; 400 on invalid
+                      credentials, inactive account, or unverified email.
+        """
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.get_tokens(), status=status.HTTP_200_OK)
 
 
 class PasswordResetConfirmView(APIView):
