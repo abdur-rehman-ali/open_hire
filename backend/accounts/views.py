@@ -7,6 +7,10 @@ from .serializers import (
     VerifyEmailSerializer,
     PasswordResetRequestSerializer,
     PasswordResetConfirmSerializer,
+    LoginSerializer,
+    CurrentUserSerializer,
+    UpdateProfileSerializer,
+    LogoutSerializer,
 )
 
 
@@ -86,6 +90,93 @@ class PasswordResetRequestView(APIView):
             },
             status=status.HTTP_200_OK,
         )
+
+
+class LoginView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        """
+        Authenticate a user with email and password and return a JWT token pair.
+
+        POST /api/v1/accounts/login
+
+        Args:
+            request: DRF Request containing email and password fields.
+
+        Returns:
+            Response: 200 with access and refresh JWT tokens; 400 on invalid
+                      credentials, inactive account, or unverified email.
+        """
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.get_tokens(), status=status.HTTP_200_OK)
+
+
+class CurrentUserView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        """
+        Return the profile of the currently authenticated user.
+
+        GET /api/v1/accounts/me
+
+        Args:
+            request: DRF Request with a valid JWT Bearer token in the
+                     Authorization header.
+
+        Returns:
+            Response: 200 with id, username, email, and profile fields;
+                      401 if the token is missing or invalid.
+        """
+        user = request.user
+        serializer = CurrentUserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request):
+        """
+        Partially update the authenticated user's profile.
+
+        PATCH /api/v1/accounts/me
+
+        Args:
+            request: DRF Request with a valid JWT Bearer token and any subset
+                     of bio, role, phone_number fields.
+
+        Returns:
+            Response: 200 with the full updated user representation;
+                      400 on validation errors; 401 if unauthenticated.
+        """
+        serializer = UpdateProfileSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user)
+        return Response(
+            CurrentUserSerializer(request.user).data, status=status.HTTP_200_OK
+        )
+
+
+class LogoutView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        """
+        Blacklist the provided refresh token to invalidate the session.
+
+        POST /api/v1/accounts/logout
+
+        Args:
+            request: DRF Request with a valid JWT Bearer token in the
+                     Authorization header and {"refresh": "<token>"} in the body.
+
+        Returns:
+            Response: 204 on success; 400 if the token is invalid or already
+                      blacklisted; 401 if unauthenticated.
+        """
+        serializer = LogoutSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class PasswordResetConfirmView(APIView):
