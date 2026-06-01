@@ -10,6 +10,7 @@ from .serializers import (
     LoginSerializer,
     CurrentUserSerializer,
     UpdateProfileSerializer,
+    LogoutSerializer,
 )
 
 
@@ -153,6 +154,29 @@ class CurrentUserView(APIView):
         return Response(
             CurrentUserSerializer(request.user).data, status=status.HTTP_200_OK
         )
+
+
+class LogoutView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        """
+        Blacklist the provided refresh token to invalidate the session.
+
+        POST /api/v1/accounts/logout
+
+        Args:
+            request: DRF Request with a valid JWT Bearer token in the
+                     Authorization header and {"refresh": "<token>"} in the body.
+
+        Returns:
+            Response: 204 on success; 400 if the token is invalid or already
+                      blacklisted; 401 if unauthenticated.
+        """
+        serializer = LogoutSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class PasswordResetConfirmView(APIView):
