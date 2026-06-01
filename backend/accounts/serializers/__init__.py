@@ -4,6 +4,7 @@ from .password_reset_request import PasswordResetRequestSerializer
 from .password_reset_confirm import PasswordResetConfirmSerializer
 from .login import LoginSerializer
 from .current_user import CurrentUserSerializer
+from .update_profile import UpdateProfileSerializer
 
 __all__ = [
     "RegistrationSerializer",
@@ -12,4 +13,5 @@ __all__ = [
     "PasswordResetConfirmSerializer",
     "LoginSerializer",
     "CurrentUserSerializer",
+    "UpdateProfileSerializer",
 ]

@@ -9,6 +9,7 @@ from .serializers import (
     PasswordResetConfirmSerializer,
     LoginSerializer,
     CurrentUserSerializer,
+    UpdateProfileSerializer,
 )
 
 
@@ -131,6 +132,27 @@ class CurrentUserView(APIView):
         user = request.user
         serializer = CurrentUserSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request):
+        """
+        Partially update the authenticated user's profile.
+
+        PATCH /api/v1/accounts/me
+
+        Args:
+            request: DRF Request with a valid JWT Bearer token and any subset
+                     of bio, role, phone_number fields.
+
+        Returns:
+            Response: 200 with the full updated user representation;
+                      400 on validation errors; 401 if unauthenticated.
+        """
+        serializer = UpdateProfileSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user)
+        return Response(
+            CurrentUserSerializer(request.user).data, status=status.HTTP_200_OK
+        )
 
 
 class PasswordResetConfirmView(APIView):
