@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 
-from .serializers import (
+from accounts.serializers import (
     RegistrationSerializer,
     RegistrationResponseSerializer,
     VerifyEmailSerializer,
@@ -13,7 +13,7 @@ from .serializers import (
     UpdateProfileSerializer,
     LogoutSerializer,
 )
-from .services.accounts_service import AccountsService
+from accounts.services.accounts_service import AccountsService
 
 
 class RegistrationView(APIView):
