@@ -2,8 +2,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 
-from .serializers import (
+from accounts.serializers import (
     RegistrationSerializer,
+    RegistrationResponseSerializer,
     VerifyEmailSerializer,
     PasswordResetRequestSerializer,
     PasswordResetConfirmSerializer,
@@ -12,6 +13,7 @@ from .serializers import (
     UpdateProfileSerializer,
     LogoutSerializer,
 )
+from accounts.services.accounts_service import AccountsService
 
 
 class RegistrationView(APIView):
@@ -33,9 +35,10 @@ class RegistrationView(APIView):
         """
         serializer = RegistrationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+        result = AccountsService.register(serializer.validated_data)
         return Response(
-            serializer.to_representation(user), status=status.HTTP_201_CREATED
+            RegistrationResponseSerializer(result).data,
+            status=status.HTTP_201_CREATED,
         )
 
 

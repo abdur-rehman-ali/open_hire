@@ -1,4 +1,5 @@
 from .registration import RegistrationSerializer
+from .registration_response import RegistrationResponseSerializer
 from .verify_email import VerifyEmailSerializer
 from .password_reset_request import PasswordResetRequestSerializer
 from .password_reset_confirm import PasswordResetConfirmSerializer
@@ -9,6 +10,7 @@ from .logout import LogoutSerializer
 
 __all__ = [
     "RegistrationSerializer",
+    "RegistrationResponseSerializer",
     "VerifyEmailSerializer",
     "PasswordResetRequestSerializer",
     "PasswordResetConfirmSerializer",
