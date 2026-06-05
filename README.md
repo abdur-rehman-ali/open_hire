@@ -1,5 +1,10 @@
 # OpenHire
 
+## Table of Contents
+
+- [Setup Guide](#setup-guide)
+- [How to Install New Package](#how-to-install-new-package)
+
 ## Setup Guide
 
 ```bash
