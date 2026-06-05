@@ -1,7 +1,7 @@
 Django==4.2.30
 djangorestframework==3.16.1
 django-extensions==4.1
-django-silk==0.5.2
+django-silk==5.1.0
 python-decouple==3.8
 pytokens==0.4.1
 black==25.11.0
