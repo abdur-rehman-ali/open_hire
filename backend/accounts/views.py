@@ -4,6 +4,7 @@ from rest_framework import status, permissions
 
 from .serializers import (
     RegistrationSerializer,
+    RegistrationResponseSerializer,
     VerifyEmailSerializer,
     PasswordResetRequestSerializer,
     PasswordResetConfirmSerializer,
@@ -34,30 +35,9 @@ class RegistrationView(APIView):
         """
         serializer = RegistrationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        data = serializer.validated_data
-        user, profile, verification_token = AccountsService.register(
-            username=data["username"],
-            email=data["email"],
-            password=data["password"],
-            role=data["role"],
-            bio=data.get("bio", ""),
-            phone_number=data.get("phone_number", ""),
-        )
+        result = AccountsService.register(serializer.validated_data)
         return Response(
-            {
-                "id": user.id,
-                "username": user.username,
-                "email": user.email,
-                "profile": {
-                    "bio": profile.bio,
-                    "role": profile.role,
-                    "phone_number": profile.phone_number,
-                    "is_email_verified": profile.is_email_verified,
-                },
-                "email_verification": {
-                    "expires_at": verification_token.expires_at.isoformat(),
-                },
-            },
+            RegistrationResponseSerializer(result).data,
             status=status.HTTP_201_CREATED,
         )
 
