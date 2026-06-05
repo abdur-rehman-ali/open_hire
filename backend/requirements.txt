@@ -19,7 +19,9 @@ billiard==4.2.4
 black==25.11.0
     # via -r requirements.in
 celery==5.3.6
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   flower
 click==8.1.8
     # via
     #   black
@@ -50,8 +52,12 @@ djangorestframework==3.16.1
     #   djangorestframework-simplejwt
 djangorestframework-simplejwt==5.3.1
     # via -r requirements.in
+flower==2.0.1
+    # via -r requirements.in
 gprof2dot==2025.4.14
     # via django-silk
+humanize==4.13.0
+    # via flower
 kombu==5.6.2
     # via celery
 mypy-extensions==1.1.0
@@ -64,6 +70,8 @@ pathspec==1.1.1
     # via black
 platformdirs==4.4.0
     # via black
+prometheus-client==0.25.0
+    # via flower
 prompt-toolkit==3.0.52
     # via click-repl
 pycodestyle==2.14.0
@@ -78,6 +86,8 @@ pytokens==0.4.1
     # via
     #   -r requirements.in
     #   black
+pytz==2026.2
+    # via flower
 redis==5.0.1
     # via -r requirements.in
 six==1.17.0
@@ -90,6 +100,8 @@ tomli==2.4.1
     # via
     #   autopep8
     #   black
+tornado==6.5.6
+    # via flower
 typing-extensions==4.15.0
     # via
     #   asgiref
