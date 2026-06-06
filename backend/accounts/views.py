@@ -49,7 +49,7 @@ class VerifyEmailView(APIView):
         """
         Consume a verification token and mark the user's email as verified.
 
-        POST /api/v1/accounts/verify-email/
+        POST /api/v1/accounts/verify-email
 
         Args:
             request: DRF Request containing a `token` UUID field.
@@ -76,7 +76,7 @@ class PasswordResetRequestView(APIView):
         Always returns 200 regardless of whether the email is registered to
         prevent user enumeration.
 
-        POST /api/v1/accounts/password-reset/
+        POST /api/v1/accounts/password-reset
 
         Args:
             request: DRF Request containing an `email` field.
@@ -189,7 +189,7 @@ class PasswordResetConfirmView(APIView):
         """
         Confirm a password reset using a valid token and set the new password.
 
-        POST /api/v1/accounts/password-reset/confirm/
+        POST /api/v1/accounts/password-reset/confirm
 
         Args:
             request: DRF Request containing `token` UUID and `new_password` fields.
