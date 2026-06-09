@@ -1,6 +1,6 @@
 export default function Home() {
   return (
-    <div className="dark:bg-black">
+    <div>
       <h1>Hello Open Hire</h1>
     </div>
   );
